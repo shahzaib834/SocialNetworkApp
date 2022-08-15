@@ -15,6 +15,24 @@ a {
   box-sizing: border-box;
 }
 
+label {
+  color: gray;
+}
+
+input {
+  margin-top: 2px;
+  margin-bottom: 12px;
+}
+
+select {
+  margin-top: 2px;
+  margin-bottom: 12px;
+}
+
+.color-gray {
+  color: gray;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
