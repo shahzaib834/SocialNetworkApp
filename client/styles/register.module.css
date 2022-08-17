@@ -32,3 +32,20 @@
   align-items: center;
   margin-bottom: 5px;
 }
+
+.bg_image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 100vw;
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(9, 9, 121, 1) 33%,
+    rgba(123, 8, 142, 1) 53%,
+    rgba(0, 212, 255, 1) 100%
+  );
+
+  text-shadow: 1px 1px 1px #fff;
+}

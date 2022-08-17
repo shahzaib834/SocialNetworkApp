@@ -40,7 +40,7 @@ const registerUser = async (req, res) => {
 
     res.status(201).cookie('token', token, options).json({
       success: true,
-      message: 'User Created successfully',
+      message: 'User Created successfully. Please Login',
       user,
       token,
     });
@@ -53,4 +53,63 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).json({
+        success: false,
+        message: 'Please enter email and password',
+      });
+
+      return;
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+
+      return;
+    }
+
+    const isPasswordMatched = await user.matchPassword(password);
+
+    if (!isPasswordMatched) {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+
+      return;
+    }
+
+    const token = user.generateWebToken();
+
+    // Saving token into cookie
+    const options = {
+      expires: new Date(
+        Date.now() + process.env.COOKIE_EXPIRES_TIME * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: true,
+    };
+
+    res.status(200).cookie('token', token, options).json({
+      success: true,
+      token,
+      user,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+    });
+  }
+};
+
+module.exports = { registerUser, loginUser };

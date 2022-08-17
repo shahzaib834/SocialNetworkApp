@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+import { Spinner, Image } from 'react-bootstrap';
 import styles from '../styles/register.module.css';
 import CustomToast from '../components/Toast';
 
@@ -11,10 +12,12 @@ const register = () => {
   const [secret, setSecret] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
   const [ok, setOk] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const { data } = await axios.post(
         'http://localhost:8000/api/auth/register',
         {
@@ -26,10 +29,16 @@ const register = () => {
       );
 
       setResponseMessage(data.message);
-      console.log(data);
       setOk(true);
+
+      setLoading(false);
+      setName('');
+      setEmail('');
+      setPassword('');
+      setSecret('');
     } catch (err) {
       setOk(false);
+      setLoading(false);
       setResponseMessage(err.response.data.message);
       console.log(err.response.data.message);
     }
@@ -37,8 +46,8 @@ const register = () => {
 
   return (
     <>
-      <div className='py-5 bg-secondary text-light'>
-        <h1 className='text-center'>Register</h1>
+      <div className={styles.bg_image}>
+        <h1 className='text-light'>Register</h1>
       </div>
 
       <div className={styles.container}>
@@ -95,8 +104,16 @@ const register = () => {
             type='text'
           />
 
-          <button type='submit' className='btn btn-primary'>
-            Submit
+          <button
+            type='submit'
+            className='btn btn-primary'
+            disabled={!name || !password || !secret || !email}
+          >
+            {loading ? (
+              <Spinner animation='border' size='sm' variant='info' />
+            ) : (
+              'Submit'
+            )}
           </button>
         </form>
       </div>
