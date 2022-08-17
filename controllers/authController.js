@@ -14,8 +14,12 @@ const registerUser = async (req, res) => {
     }
 
     // Checking if user already exists
-    // const exists = User.findOne({ email });
-    // if (exists) return res.status(400).send('Email Already Taken');
+    const exists = await User.findOne({ email });
+    if (exists)
+      return res.status(400).json({
+        success: false,
+        message: 'Email Already Taken',
+      });
 
     const user = await User.create({
       name,
@@ -44,7 +48,7 @@ const registerUser = async (req, res) => {
     console.log(err);
     res.status(400).json({
       success: false,
-      message: err.message,
+      message: 'Something Went Wrong',
     });
   }
 };

@@ -1,24 +1,40 @@
 import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import styles from '../styles/Header.module.css';
 
 const Header = () => {
   return (
     <header>
-      <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
-        <Container>
-          <Navbar.Brand>Brand Name</Navbar.Brand>
+      <nav className='navbar navbar-expand-lg bg-dark navbar-dark'>
+        <div className='container-fluid'>
+          <a className='navbar-brand'>Brand Name</a>
 
-          <Navbar.Toggle aria-controls='basic-navbar-nav' />
-          <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ml-auto'>
-              <Nav.Link>Cart</Nav.Link>
+          <button
+            className='navbar-toggler'
+            type='button'
+            data-bs-toggle='collapse'
+            data-bs-target='#navbarSupportedContent'
+            aria-controls='navbarSupportedContent'
+            aria-expanded='false'
+            aria-label='Toggle navigation'
+          >
+            <span className='navbar-toggler-icon'></span>
+          </button>
+          <div id='navbarSupportedContent' className='collapse navbar-collapse'>
+            <ul className='navbar-nav me-auto'>
+              <li className='nav-item'>
+                <a className='nav-link' href='#'>
+                  Cart
+                </a>
+              </li>
 
-              <Nav.Link>Sign in</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+              <li className='nav-item'>
+                <a className='nav-link' href='#'>
+                  Sign in
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 };

@@ -1,35 +1,57 @@
 import React, { useState } from 'react';
-import styles from '../styles/register.module.css';
 import axios from 'axios';
+
+import styles from '../styles/register.module.css';
+import CustomToast from '../components/Toast';
 
 const register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secret, setSecret] = useState('');
-  const [error, setError] = useState('Error');
+  const [responseMessage, setResponseMessage] = useState('');
+  const [ok, setOk] = useState(true);
 
-  const handleSubmit = async () => {
-    //e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const { data } = axios.post('http://localhost:8000/api/auth/register', {
-        name,
-        email,
-        password,
-        secret,
-      });
+      const { data } = await axios.post(
+        'http://localhost:8000/api/auth/register',
+        {
+          name,
+          email,
+          password,
+          secret,
+        }
+      );
+
+      setResponseMessage(data.message);
+      console.log(data);
+      setOk(true);
     } catch (err) {
-      console.log(err);
+      setOk(false);
+      setResponseMessage(err.response.data.message);
+      console.log(err.response.data.message);
     }
   };
 
   return (
     <>
-      <div className='row py-5 bg-secondary text-light'>
-        <h1 className='col text-center'>Register</h1>
+      <div className='py-5 bg-secondary text-light'>
+        <h1 className='text-center'>Register</h1>
       </div>
 
       <div className={styles.container}>
+        {responseMessage ? (
+          <div className={styles.toastContainer}>
+            <CustomToast
+              message={responseMessage}
+              variant={ok ? 'success' : 'danger'}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
         <form className={styles.form} onSubmit={handleSubmit}>
           <label>Your name</label>
           <input
