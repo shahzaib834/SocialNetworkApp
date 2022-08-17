@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-import { Spinner, Image } from 'react-bootstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import { registerUser } from '../store/authReducer';
+
+import { Spinner } from 'react-bootstrap';
 import styles from '../styles/register.module.css';
 import CustomToast from '../components/Toast';
 
@@ -10,37 +13,31 @@ const register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secret, setSecret] = useState('');
-  const [responseMessage, setResponseMessage] = useState('');
-  const [ok, setOk] = useState(true);
-  const [loading, setLoading] = useState(false);
+
+  const { message, user, loading, error, success } = useSelector(
+    (state) => state.auth
+  );
+
+  // Hooks
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        'http://localhost:8000/api/auth/register',
-        {
-          name,
-          email,
-          password,
-          secret,
-        }
-      );
 
-      setResponseMessage(data.message);
-      setOk(true);
+    const formData = {
+      name,
+      email,
+      password,
+      secret,
+    };
 
-      setLoading(false);
+    dispatch(registerUser(formData));
+
+    if (success) {
       setName('');
       setEmail('');
       setPassword('');
       setSecret('');
-    } catch (err) {
-      setOk(false);
-      setLoading(false);
-      setResponseMessage(err.response.data.message);
-      console.log(err.response.data.message);
     }
   };
 
@@ -51,11 +48,11 @@ const register = () => {
       </div>
 
       <div className={styles.container}>
-        {responseMessage ? (
+        {error || message ? (
           <div className={styles.toastContainer}>
             <CustomToast
-              message={responseMessage}
-              variant={ok ? 'success' : 'danger'}
+              message={error ? error : message}
+              variant={error ? 'danger' : 'success'}
             />
           </div>
         ) : (
