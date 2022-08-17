@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useSelector, useDispatch } from 'react-redux';
+import { login } from '../store/authReducer';
 
 import { Spinner } from 'react-bootstrap';
 import styles from '../styles/register.module.css';
@@ -9,32 +10,29 @@ import CustomToast from '../components/Toast';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [responseMessage, setResponseMessage] = useState('');
-  const [ok, setOk] = useState(true);
-  const [loading, setLoading] = useState(false);
+
+  const { isAuthenticated, loading, error, user } = useSelector(
+    (state) => state.auth
+  );
+
+  // Hooks
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        'http://localhost:8000/api/auth/login',
-        {
-          email,
-          password,
-        }
-      );
+    const formData = {
+      email,
+      password,
+    };
 
-      // Redirect to Home Page.
+    dispatch(login(formData));
 
-      setOk(true);
-      setLoading(false);
+    // Redirect to Home Page.
+    if (isAuthenticated) {
       setEmail('');
       setPassword('');
-    } catch (err) {
-      setOk(false);
-      setLoading(false);
-      setResponseMessage(err.response.data.message);
+      router.push('/');
     }
   };
 
@@ -45,12 +43,9 @@ const Login = () => {
       </div>
 
       <div className={styles.container}>
-        {responseMessage ? (
+        {error ? (
           <div className={styles.toastContainer}>
-            <CustomToast
-              message={responseMessage}
-              variant={ok ? 'success' : 'danger'}
-            />
+            <CustomToast message={error} variant='danger' />
           </div>
         ) : (
           <></>
